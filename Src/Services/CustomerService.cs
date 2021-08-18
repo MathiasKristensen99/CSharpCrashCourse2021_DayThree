@@ -79,8 +79,6 @@ namespace CrashCourse2021ExercisesDayThree.Services
         public List<Customer> SearchCustomer(string searchField, string searchValue)
         {
             List<Customer> customers = GetCustomers();
-            //int result;
-            //out result;
 
             if (searchField == null)
             {
@@ -91,34 +89,38 @@ namespace CrashCourse2021ExercisesDayThree.Services
             {
                 throw new InvalidDataException(Constants.CustomerSearchValueCannotBeNull);
             }
-
+            
+            
             switch (searchField.ToLower())
             {
-                case "FirstName":
+                case "lastname":
                 {
-                    return customers.FindAll(customer => customer.FirstName.ToLower().Contains(searchValue));
-                    break;
+                    return customers.FindAll(customer => customer.LastName.ToLower().Contains(searchValue.ToLower()));
                 }
-            }
-            
-            switch (searchField)
-            {
-                case "LastName":
+                case "firstname":
                 {
-                    return customers.FindAll(customer => customer.LastName.Contains(searchValue));
-                    break;
+                    return customers.FindAll(customer => customer.FirstName.ToLower().Contains(searchValue.ToLower()));
                 }
-                case "FirstName":
+                case "id":
                 {
-                    return customers.FindAll(customer => customer.FirstName.Contains(searchValue));
-                }
-                case "Id":
-                {
-                    return customers.FindAll(customer => customer.Id.Equals(int.Parse(searchValue)));
-                }
-            }
+                    int result;
+                    if (!int.TryParse(searchValue, out result))
+                    {
+                        throw new InvalidDataException(Constants.CustomerSearchValueWithFieldTypeIdMustBeANumber);
+                    }
 
-            throw new NotImplementedException();
+                    int.TryParse(searchValue, out result);
+                    if (result <= 0)
+                    {
+                        throw new InvalidDataException(Constants.CustomerIdMustBeAboveZero);
+                    }
+                    return customers.FindAll(customer => customer.Id.Equals(int.Parse(searchValue.ToLower())));
+                }
+                default:
+                {
+                    throw new InvalidDataException(Constants.CustomerSearchFieldNotFound);
+                }
+            }
         }
     }
 }
